@@ -25,7 +25,6 @@ import (
 	"github.com/sprintframework/seal"
 	"github.com/sprintframework/sealmod"
 	"github.com/sprintframework/sprint"
-	"github.com/sprintframework/sprintframework/pkg/util"
 	"go.uber.org/zap"
 	"golang.org/x/net/idna"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -648,7 +647,7 @@ func (t *implCertificateService) createSelfCert(args []string) (string, error) {
 		return fmt.Sprintf("Usage: ./%s cert create self domain [self-signer]", t.Application.Name()), nil
 	}
 
-	domain := util.UnFqdn(args[0])
+	domain := UnFqdn(args[0])
 	args = args[1:]
 
 	punycode, err := idna.Lookup.ToASCII(domain)
@@ -656,7 +655,7 @@ func (t *implCertificateService) createSelfCert(args []string) (string, error) {
 		return"", errors.Wrapf(err, "domain name '%s' contains invalid character", domain)
 	}
 
-	zone, err := util.ToZone(punycode)
+	zone, err := ToZone(punycode)
 	if err != nil {
 		return "", err
 	}
@@ -729,7 +728,7 @@ func (t *implCertificateService) createAcmeCert(args []string) (string, error) {
 		return fmt.Sprintf("Usage: ./%s cert create acme domain email [dns_provider]", t.Application.Name()), nil
 	}
 
-	domain := util.UnFqdn(args[0])
+	domain := UnFqdn(args[0])
 	email := strings.ToLower(args[1])
 
 	var dnsProvider string
@@ -753,7 +752,7 @@ func (t *implCertificateService) createAcmeCert(args []string) (string, error) {
 		return"", errors.Wrapf(err, "domain name '%s' contains invalid character", domain)
 	}
 
-	zone, err := util.ToZone(punycode)
+	zone, err := ToZone(punycode)
 	if err != nil {
 		return "", err
 	}
@@ -854,7 +853,7 @@ func (t *implCertificateService) createCustomCert(args []string) (string, error)
 		return fmt.Sprintf("Usage: ./%s cert create custom domain cert_file key_file issuer_cert_file", t.Application.Name()), nil
 	}
 
-	domain := util.UnFqdn(args[0])
+	domain := UnFqdn(args[0])
 	certFile := args[1]
 	keyFile := args[2]
 	issuerCertFile := args[3]
@@ -864,7 +863,7 @@ func (t *implCertificateService) createCustomCert(args []string) (string, error)
 		return"", errors.Wrapf(err, "domain name '%s' contains invalid character", domain)
 	}
 
-	zone, err := util.ToZone(punycode)
+	zone, err := ToZone(punycode)
 	if err != nil {
 		return "", err
 	}

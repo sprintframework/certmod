@@ -16,7 +16,6 @@ import (
 	"github.com/sprintframework/cert"
 	"github.com/sprintframework/certpb"
 	"github.com/sprintframework/sprint"
-	"github.com/sprintframework/sprintframework/pkg/util"
 	"go.uber.org/zap"
 	"golang.org/x/net/idna"
 	"strings"
@@ -168,7 +167,7 @@ func (t *implCertificateManager) GetCertificate(hello *tls.ClientHelloInfo) (*tl
 	if dots <= 1 {
 		zone = punycode
 	} else {
-		zone, err = util.ToZone(punycode)
+		zone, err = ToZone(punycode)
 		if err != nil {
 			return nil, err
 		}
