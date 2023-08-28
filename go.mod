@@ -8,13 +8,13 @@ require (
 	github.com/go-acme/lego/v4 v4.8.0
 	github.com/keyvalstore/store v1.3.0
 	github.com/pkg/errors v0.9.1
-	github.com/sprintframework/cert v0.0.5
-	github.com/sprintframework/certpb v0.0.1
-	github.com/sprintframework/dns v0.0.2
-	github.com/sprintframework/nat v0.0.1
+	github.com/sprintframework/cert v1.0.0
+	github.com/sprintframework/certpb v1.0.0
+	github.com/sprintframework/dns v1.0.0
+	github.com/sprintframework/nat v1.0.0
 	github.com/sprintframework/seal v1.0.0
 	github.com/sprintframework/sealmod v1.0.0
-	github.com/sprintframework/sprint v1.2.3
+	github.com/sprintframework/sprint v1.3.0
 	go.uber.org/atomic v1.10.0
 	go.uber.org/zap v1.24.0
 	golang.org/x/net v0.7.0
@@ -28,7 +28,7 @@ require (
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.15.2 // indirect
 	github.com/miekg/dns v1.1.50 // indirect
-	github.com/sprintframework/sprintpb v1.2.1 // indirect
+	github.com/sprintframework/sprintpb v1.3.0 // indirect
 	go.uber.org/multierr v1.9.0 // indirect
 	golang.org/x/crypto v0.6.0 // indirect
 	golang.org/x/mod v0.8.0 // indirect

@@ -6,22 +6,22 @@
 package certmod
 
 import (
+	"github.com/codeallergy/glue"
 	"github.com/sprintframework/cert"
 	"github.com/sprintframework/certmod/netlify"
-	"github.com/sprintframework/sprint"
 )
 
 type certScanner struct {
 	Scan     []interface{}
 }
 
-func Scanner(scan... interface{}) sprint.CoreScanner {
+func Scanner(scan... interface{}) glue.Scanner {
 	return &certScanner {
 		Scan: scan,
 	}
 }
 
-func (t *certScanner) CoreBeans() []interface{} {
+func (t *certScanner) Beans() []interface{} {
 
 	beans := []interface{}{
 		CertificateIssueService(),
