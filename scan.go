@@ -6,6 +6,8 @@
 package certmod
 
 import (
+	"github.com/sprintframework/cert"
+	"github.com/sprintframework/certmod/netlify"
 	"github.com/sprintframework/sprint"
 )
 
@@ -13,7 +15,7 @@ type certScanner struct {
 	Scan     []interface{}
 }
 
-func CoreScanner(scan... interface{}) sprint.CoreScanner {
+func Scanner(scan... interface{}) sprint.CoreScanner {
 	return &certScanner {
 		Scan: scan,
 	}
@@ -26,6 +28,11 @@ func (t *certScanner) CoreBeans() []interface{} {
 		CertificateRepository(),
 		CertificateService(),
 		CertificateManager(),
+		netlify.NetlifyChallenge(),
+		&struct {
+			DNSChallenges []cert.DNSChallenge `inject`
+		}{},
+		DynDNSService(),
 	}
 
 	return append(beans, t.Scan...)

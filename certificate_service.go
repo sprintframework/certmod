@@ -22,6 +22,7 @@ import (
 	"github.com/pkg/errors"
 	"github.com/sprintframework/cert"
 	"github.com/sprintframework/certpb"
+	"github.com/sprintframework/dns"
 	"github.com/sprintframework/seal"
 	"github.com/sprintframework/sealmod"
 	"github.com/sprintframework/sprint"
@@ -50,13 +51,17 @@ type implCertificateService struct {
 	CertificateRepository   cert.CertificateRepository   `inject`
 	SealService             seal.SealService             `inject`
 	CertificateIssueService cert.CertificateIssueService `inject`
-	WhoisService            sprint.WhoisService            `inject`
+	WhoisService            dns.WhoisService            `inject`
 
 	Algorithm     string   `value="tls.certificate.algorithm,default=RSA2048"`
 
-	DNSProviders  map[string]sprint.DNSProvider `inject:"optional"`
-	providerMap   map[string]sprint.DNSProvider // key is the provider name, not bean_name
+	DNSProviders  map[string]dns.DNSProvider  `inject:"optional"`
+	providerMap   map[string]dns.DNSProvider  // key is the provider name, not bean_name
 	providerList  []string
+
+	DNSChallenges  map[string]cert.DNSChallenge  `inject:"optional"`
+	challengeMap   map[string]cert.DNSChallenge  // key is the challenge name, not bean_name
+	challengeList  []string
 
 	CompanyName   string        `value:"application.company,default=sprint"`
 
@@ -66,7 +71,8 @@ type implCertificateService struct {
 
 func CertificateService() cert.CertificateService {
 	return &implCertificateService{
-		providerMap: make(map[string]sprint.DNSProvider),
+		providerMap: make(map[string]dns.DNSProvider),
+		challengeMap: make(map[string]cert.DNSChallenge),
 	}
 }
 
@@ -86,6 +92,10 @@ func (t *implCertificateService) PostConstruct() (err error) {
 		}
 	}()
 
+	/**
+	Fill DNS Providers
+	 */
+
 	for beanName, prov := range t.DNSProviders {
 		name := beanName
 		if strings.HasSuffix(name, "_provider") {
@@ -94,6 +104,23 @@ func (t *implCertificateService) PostConstruct() (err error) {
 		t.providerMap[name] = prov
 		t.providerList = append(t.providerList, name)
 	}
+
+	/**
+	Fill DNS Challenges
+	*/
+
+	for beanName, challenge := range t.DNSChallenges {
+		name := beanName
+		if strings.HasSuffix(name, "_challenge") {
+			name = name[:len(name) - len("_challenge")]
+		}
+		t.challengeMap[name] = challenge
+		t.challengeList = append(t.challengeList, name)
+	}
+
+	/**
+	Create Self-Signed Default Certificate
+	*/
 
 	entry, err := t.CertificateRepository.FindSelfSigner("localhost")
 	if err != nil {
@@ -344,12 +371,12 @@ func (t *implCertificateService) IssueAcmeCertificate(entry *certpb.Zone) (strin
 		return "", err
 	}
 
-	prov, ok := t.providerMap[entry.DnsProvider]
+	challenge, ok := t.challengeMap[entry.DnsProvider]
 	if !ok {
-		return "", errors.Errorf("DNS provider '%s' not found", entry.DnsProvider)
+		return "", errors.Errorf("DNS challenge not found for '%s'", entry.DnsProvider)
 	}
 
-	if err := prov.RegisterChallenge(client, entry.DnsProviderToken); err != nil {
+	if err := challenge.RegisterChallenge(client, entry.DnsProviderToken); err != nil {
 		return "", errors.Errorf("DNS provider '%s' does not have credentials, %v", entry.DnsProvider, err)
 	}
 
