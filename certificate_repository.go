@@ -24,8 +24,8 @@ var (
 
 type implCertificateRepository struct {
 	sync.Mutex
-	Log          *zap.Logger           `inject`
-	Storage   store.DataStore  `inject:"bean=config-storage"`
+	Log       *zap.Logger     `inject`
+	Store     store.DataStore `inject:"bean=config-store"`
 
 	watchNum  atomic.Int64
 	watchMap  sync.Map       // watchNum, configWatchContext
@@ -63,17 +63,17 @@ func (t *implCertificateRepository) Destroy() error {
 }
 
 func (t *implCertificateRepository) SaveSelfSigner(self *certpb.SelfSigner) error {
-	return t.Storage.Set(context.Background()).ByKey("%s:self:%s", CertBucket, self.Name).Proto(self)
+	return t.Store.Set(context.Background()).ByKey("%s:self:%s", CertBucket, self.Name).Proto(self)
 }
 
 func (t *implCertificateRepository) FindSelfSigner(name string) (entry *certpb.SelfSigner, err error) {
 	entry = new(certpb.SelfSigner)
-	err = t.Storage.Get(context.Background()).ByKey("%s:self:%s", CertBucket, name).ToProto(entry)
+	err = t.Store.Get(context.Background()).ByKey("%s:self:%s", CertBucket, name).ToProto(entry)
 	return
 }
 
 func (t *implCertificateRepository) ListSelfSigners(prefix string, cb func(*certpb.SelfSigner) bool) error {
-	return t.Storage.Enumerate(context.Background()).ByPrefix("%s:self:%s", CertBucket, prefix).WithBatchSize(100).DoProto(func() proto.Message {
+	return t.Store.Enumerate(context.Background()).ByPrefix("%s:self:%s", CertBucket, prefix).WithBatchSize(100).DoProto(func() proto.Message {
 		return new(certpb.SelfSigner)
 	}, func(entry *store.ProtoEntry) bool {
 		if v, ok := entry.Value.(*certpb.SelfSigner); ok {
@@ -84,21 +84,21 @@ func (t *implCertificateRepository) ListSelfSigners(prefix string, cb func(*cert
 }
 
 func (t *implCertificateRepository) DeleteSelfSigner(name string) error {
-	return t.Storage.Remove(context.Background()).ByKey("%s:self:%s", CertBucket, name).Do()
+	return t.Store.Remove(context.Background()).ByKey("%s:self:%s", CertBucket, name).Do()
 }
 
 func (t *implCertificateRepository) SaveAccount(account *certpb.AcmeAccount) error {
-	return t.Storage.Set(context.Background()).ByKey("%s:acme:%s", CertBucket, account.Email).Proto(account)
+	return t.Store.Set(context.Background()).ByKey("%s:acme:%s", CertBucket, account.Email).Proto(account)
 }
 
 func (t *implCertificateRepository) FindAccount(email string) (entry *certpb.AcmeAccount, err error) {
 	entry = new(certpb.AcmeAccount)
-	err = t.Storage.Get(context.Background()).ByKey("%s:acme:%s", CertBucket, email).ToProto(entry)
+	err = t.Store.Get(context.Background()).ByKey("%s:acme:%s", CertBucket, email).ToProto(entry)
 	return
 }
 
 func (t *implCertificateRepository) ListAccounts(prefix string, cb func(*certpb.AcmeAccount) bool) error {
-	return t.Storage.Enumerate(context.Background()).ByPrefix("%s:acme:%s", CertBucket, prefix).WithBatchSize(100).DoProto(func() proto.Message {
+	return t.Store.Enumerate(context.Background()).ByPrefix("%s:acme:%s", CertBucket, prefix).WithBatchSize(100).DoProto(func() proto.Message {
 		return new(certpb.AcmeAccount)
 	}, func(entry *store.ProtoEntry) bool {
 		if v, ok := entry.Value.(*certpb.AcmeAccount); ok {
@@ -109,11 +109,11 @@ func (t *implCertificateRepository) ListAccounts(prefix string, cb func(*certpb.
 }
 
 func (t *implCertificateRepository) DeleteAccount(email string) error {
-	return t.Storage.Remove(context.Background()).ByKey("%s:acme:%s", CertBucket, email).Do()
+	return t.Store.Remove(context.Background()).ByKey("%s:acme:%s", CertBucket, email).Do()
 }
 
 func (t *implCertificateRepository) SaveZone(zone *certpb.Zone) error {
-	err := t.Storage.Set(context.Background()).ByKey("%s:zone:%s", CertBucket, zone.Zone).Proto(zone)
+	err := t.Store.Set(context.Background()).ByKey("%s:zone:%s", CertBucket, zone.Zone).Proto(zone)
 	if err == nil {
 		t.notifyAll(zone.Zone, "UPDATE")
 	}
@@ -122,12 +122,12 @@ func (t *implCertificateRepository) SaveZone(zone *certpb.Zone) error {
 
 func (t *implCertificateRepository) FindZone(zone string) (entry *certpb.Zone, err error) {
 	entry = new(certpb.Zone)
-	err = t.Storage.Get(context.Background()).ByKey("%s:zone:%s", CertBucket, zone).ToProto(entry)
+	err = t.Store.Get(context.Background()).ByKey("%s:zone:%s", CertBucket, zone).ToProto(entry)
 	return
 }
 
 func (t *implCertificateRepository) ListZones(prefix string, cb func(*certpb.Zone) bool) error {
-	return t.Storage.Enumerate(context.Background()).ByPrefix("%s:zone:%s", CertBucket, prefix).WithBatchSize(100).DoProto(func() proto.Message {
+	return t.Store.Enumerate(context.Background()).ByPrefix("%s:zone:%s", CertBucket, prefix).WithBatchSize(100).DoProto(func() proto.Message {
 		return new(certpb.Zone)
 	}, func(entry *store.ProtoEntry) bool {
 		if v, ok := entry.Value.(*certpb.Zone); ok {
@@ -138,7 +138,7 @@ func (t *implCertificateRepository) ListZones(prefix string, cb func(*certpb.Zon
 }
 
 func (t *implCertificateRepository) DeleteZone(zone string) error {
-	err := t.Storage.Remove(context.Background()).ByKey("%s:zone:%s", CertBucket, zone).Do()
+	err := t.Store.Remove(context.Background()).ByKey("%s:zone:%s", CertBucket, zone).Do()
 	if err == nil {
 		t.notifyAll(zone, "DELETE")
 	}
@@ -219,13 +219,13 @@ func (t *implCertificateRepository) Watch(ctx context.Context, cb func(zone, eve
 func (t *implCertificateRepository) Backend() store.DataStore {
 	t.Lock()
 	defer t.Unlock()
-	return t.Storage
+	return t.Store
 }
 
 func (t *implCertificateRepository) SetBackend(storage store.DataStore) {
 	t.Lock()
 	defer t.Unlock()
-	t.Storage = storage
+	t.Store = storage
 }
 
 
