@@ -112,7 +112,7 @@ func (t *implDynDNSService) EnsureCustom(cb func(client dns.DNSProviderClient, z
 			continue
 		}
 
-		client, err := prov.NewClient()
+		client, err := prov.NewClient(entry.DnsProviderToken)
 		if err != nil {
 			listErr = append(listErr, errors.Wrapf(err, "init dns provider '%s';", entry.DnsProvider))
 			continue

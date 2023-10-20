@@ -822,7 +822,7 @@ func (t *implCertificateService) createAcmeCert(args []string) (string, error) {
 	}
 
 	var ask error
-	_, err = prov.NewClient()
+	_, err = prov.NewClient(exist.DnsProviderToken)
 	if err != nil {
 		t.Log.Error("DNSProvider", zap.String("zone", zone), zap.String("provider", dnsProvider), zap.Error(err))
 		ask = errors.Errorf("Warning: token for DNS provider %s not found, %v", dnsProvider, err)

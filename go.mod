@@ -8,9 +8,9 @@ require (
 	github.com/go-acme/lego/v4 v4.8.0
 	github.com/keyvalstore/store v1.3.0
 	github.com/pkg/errors v0.9.1
-	github.com/sprintframework/cert v1.0.2
+	github.com/sprintframework/cert v1.0.3
 	github.com/sprintframework/certpb v1.0.0
-	github.com/sprintframework/dns v1.0.2
+	github.com/sprintframework/dns v1.0.3
 	github.com/sprintframework/nat v1.0.2
 	github.com/sprintframework/seal v1.0.2
 	github.com/sprintframework/sealmod v1.0.2

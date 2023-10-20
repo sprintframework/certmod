@@ -1033,13 +1033,12 @@ github.com/spf13/pflag v1.0.3/go.mod h1:DYY7MBk1bdzusC3SYhjObp+wFpr4gzcvqqNjLnIn
 github.com/spf13/pflag v1.0.5/go.mod h1:McXfInJRrz4CZXVZOBLb0bTZqETkiAhM9Iw0y3An2Bg=
 github.com/spf13/viper v1.7.0/go.mod h1:8WkrPz2fc9jxqZNCJI/76HCieCp4Q8HaLFoCha5qpdg=
 github.com/spf13/viper v1.7.1/go.mod h1:8WkrPz2fc9jxqZNCJI/76HCieCp4Q8HaLFoCha5qpdg=
-github.com/sprintframework/cert v1.0.2 h1:sm+ckV/0rWSmB6YemgRHylQW78VcX/3/ukfQ/HwczJI=
-github.com/sprintframework/cert v1.0.2/go.mod h1:1frTu8KIrjcrz3OjbFz6+6ylpuMR1S90LWz9+vHQBLk=
+github.com/sprintframework/cert v1.0.3 h1:YTLbDHkOGnlA7o2uSm8AnrbmyEz7rrslibDLsDlWogc=
+github.com/sprintframework/cert v1.0.3/go.mod h1:kGkBAOGFUsXFFRlcj0/18xPrNkKEF4Z830B0F1J6Enw=
 github.com/sprintframework/certpb v1.0.0 h1:CQoCUZolBblQ0uIKuoKfdQTMahngDoBvPicTn6oWg5Q=
 github.com/sprintframework/certpb v1.0.0/go.mod h1:4rixgAPCH6BAe4zJ6eSWFL6Y3eATpOghR14y6tDsCOw=
-github.com/sprintframework/dns v1.0.1/go.mod h1:xQHKQW5E5OTyENTfRAe4/BhI2azVYquC07Gw3rg1l8w=
-github.com/sprintframework/dns v1.0.2 h1:fr+iUxTdLl4dtprYa7UOZvhsAs6Cngdf+kthLqvZFSQ=
-github.com/sprintframework/dns v1.0.2/go.mod h1:xQHKQW5E5OTyENTfRAe4/BhI2azVYquC07Gw3rg1l8w=
+github.com/sprintframework/dns v1.0.3 h1:+OuTOarPT2OaCWMXAvPw+Rv1WbinvVtNEivC3CLMTZc=
+github.com/sprintframework/dns v1.0.3/go.mod h1:4X4Pb2EjZafm2WWj7WMVZ8knTvVyNQ0UggTYPtMEMwU=
 github.com/sprintframework/nat v1.0.2 h1:nNWy4uECNztP4AFOaQ1uTUBGhyxdOV0vW2pWJHo6/mw=
 github.com/sprintframework/nat v1.0.2/go.mod h1:WvL6PCteEvWIb4Qp65A67FoQjcOB3bKcJTOXYF4jDFw=
 github.com/sprintframework/seal v1.0.2 h1:HrMnK0MQBHkr0BFzp18pZgWpGkXsjj0S7jUdVXhsYEY=
