@@ -401,14 +401,14 @@ func (t *implCertificateService) IssueAcmeCertificate(entry *certpb.Zone) (strin
 			CSR:               renew.Csr,
 		}
 
-		logContent = t.doAcmeCall(func() {
+		logContent, err = t.doAcmeCall(func() error {
 
 			reg, err := client.Registration.QueryRegistration()
 
 			if err != nil {
 				reg, err = client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
 				if err != nil {
-					return
+					return err
 				}
 			}
 
@@ -419,6 +419,7 @@ func (t *implCertificateService) IssueAcmeCertificate(entry *certpb.Zone) (strin
 				err = errors.Errorf("acme renew returned null for domains '%+v'", entry.Domains)
 			}
 
+			return err
 		})
 
 		if err != nil {
@@ -441,14 +442,13 @@ func (t *implCertificateService) IssueAcmeCertificate(entry *certpb.Zone) (strin
 			MustStaple: true,
 		}
 
-		logContent = t.doAcmeCall(func() {
+		logContent, err = t.doAcmeCall(func() error {
 
 			reg, err := client.Registration.QueryRegistration()
-
 			if err != nil {
 				reg, err = client.Registration.Register(registration.RegisterOptions{TermsOfServiceAgreed: true})
 				if err != nil {
-					return
+					return err
 				}
 			}
 
@@ -458,6 +458,8 @@ func (t *implCertificateService) IssueAcmeCertificate(entry *certpb.Zone) (strin
 			if err == nil && certificates == nil {
 				err = errors.Errorf("acme obtain returned null for domains '%+v'", entry.Domains)
 			}
+
+			return err
 		})
 
 		if err != nil {
@@ -524,7 +526,7 @@ func wrapAcmeResource(r *registration.Resource) *cert.AcmeResource {
 	}
 }
 
-func (t *implCertificateService) doAcmeCall(cb func()) []byte {
+func (t *implCertificateService) doAcmeCall(cb func() error) ([]byte, error) {
 
 	t.acmeMutex.Lock()
 	saveLogger := legolog.Logger
@@ -532,12 +534,12 @@ func (t *implCertificateService) doAcmeCall(cb func()) []byte {
 	var buf bytes.Buffer
 	legolog.Logger = log.New(&buf, "", log.LstdFlags)
 
-	cb()
+	err := cb()
 
 	legolog.Logger = saveLogger
 	t.acmeMutex.Unlock()
 
-	return buf.Bytes()
+	return buf.Bytes(), err
 
 }
 
