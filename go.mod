@@ -3,7 +3,7 @@ module github.com/sprintframework/certmod
 go 1.17
 
 require (
-	github.com/codeallergy/glue v1.1.3
+	github.com/codeallergy/glue v1.1.4
 	github.com/codeallergy/properties v1.1.0
 	github.com/go-acme/lego/v4 v4.8.0
 	github.com/keyvalstore/store v1.3.0

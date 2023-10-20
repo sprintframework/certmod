@@ -414,6 +414,11 @@ func (t *implCertificateService) IssueAcmeCertificate(entry *certpb.Zone) (strin
 
 			user.Registration = wrapAcmeResource(reg)
 			certificates, err = client.Certificate.Renew(certs, true, true, "")
+
+			if err == nil && certificates == nil {
+				err = errors.Errorf("acme renew returned null for domains '%+v'", entry.Domains)
+			}
+
 		})
 
 		if err != nil {
@@ -449,6 +454,10 @@ func (t *implCertificateService) IssueAcmeCertificate(entry *certpb.Zone) (strin
 
 			user.Registration = wrapAcmeResource(reg)
 			certificates, err = client.Certificate.Obtain(request)
+
+			if err == nil && certificates == nil {
+				err = errors.Errorf("acme obtain returned null for domains '%+v'", entry.Domains)
+			}
 		})
 
 		if err != nil {
